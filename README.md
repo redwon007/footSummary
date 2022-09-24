@@ -6,3 +6,9 @@ ListeTeams = ["Liverpool", "Arsenal", "Man U", "Man city", "Chelsea", "Barcelone
 2) Parse ["CANAL+ Sport"#PL, "beIN SPORTS France"#liga#Bundesliga, "Ligue 1 Uber Eats"#L1] and fill playlist
 
 END of V1
+
+
+main():
+  createPlaylist()->playlistItem playlist
+  search(list team)->list videos
+  fillPlaylist(playlistItem playlist, list videos)
