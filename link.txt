@@ -1,0 +1,2 @@
+sample python : https://github.com/youtube/api-samples/tree/master/python
+doc python all google api : https://github.com/googleapis/google-api-python-client/tree/main/samples
