@@ -29,8 +29,8 @@ def create_Playlist(youtube):
   date = datetime.datetime.now(datetime.timezone.utc)
   body = dict(
     snippet=dict(
-      title='resume du week end' + date.isoformat(),
-      description='tout le meilleur contenu du week end'
+      title='resume du week end' ,
+      description='tout le meilleur contenu du week end' + date.isoformat()
     ),
     status=dict(
       privacyStatus='private'
@@ -44,7 +44,20 @@ def create_Playlist(youtube):
 
   return(playlist)
 
-teams = ['real madrid', 'barca']
+def searchPlaylist(youtube):
+  request = youtube.playlists().list(
+      part="snippet,contentDetails",
+      maxResults=51, #to change to get all playlist (defalault is 5)
+      mine=True
+  )
+  response = request.execute()
+
+  #namesOfPlaylists = [response['items'][i]['snippet']['title'] for i in range(len(response['items']))]
+  for i in range(len(response['items'])):
+    if response['items'][i]['snippet']['title'] == 'resume du week end':
+      return(response['items'][i])
+
+
 
 def search_highlights(youtube, teams):
   videos = []
@@ -58,9 +71,9 @@ def search_highlights(youtube, teams):
       maxResults=1,
       publishedAfter=date.isoformat()
     ).execute()
+
     videos.append(search_response['items'][0]['id'])
 
-  print(videos)
   return(videos)
 
   
