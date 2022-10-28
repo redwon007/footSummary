@@ -1,0 +1,35 @@
+{
+"France":
+	{
+	"Premier league":
+		{
+		"rightholders" : "Canal plus",
+		"Channel_id" : "UC8ggH3zU61XO0nMskSQwZdA"
+		},
+	"Ligue 1":
+		{
+		"rightholders" : "Ligue 1 Uber eats chaine officielle",
+		"Channel_id" : "UCQsH5XtIc9hONE1BQjucM0g"
+		},
+	"La Liga":
+		{
+		"rightholders" : "beIN SPORTS France",
+		"Channel_id" : "UCfj4kQ6_mYO5r4hzX5KloVw"
+		},
+	"Serie A":
+		{
+		"rightholders" : "beIN SPORTS France",
+		"Channel_id" : "UCfj4kQ6_mYO5r4hzX5KloVw"
+		},
+	"Bundesliga":
+		{
+		"rightholders" : "beIN SPORTS France",
+		"Channel_id" : "UCfj4kQ6_mYO5r4hzX5KloVw"
+		},
+	"Europe":
+		{
+		"rightholders" : "RMC Sport",
+		"Channel_id" : "UCR5V8BTvlkyYtw6T_9swNEw"
+		}
+	}
+}

@@ -3,8 +3,12 @@
 # Create a playlist in the user account with all the highlights of the games of the Week End
 
 import argparse
-import os
+import os, glob
 import datetime
+import pytz
+
+from pathlib import Path
+import json
 
 import google.oauth2.credentials
 import google_auth_oauthlib.flow
@@ -45,32 +49,94 @@ def create_Playlist(youtube):
   return(playlist)
 
 def searchPlaylist(youtube):
-  request = youtube.playlists().list(
+
+  playlist = None
+
+  ###search all my playlist
+  playlists = youtube.playlists().list(
       part="snippet,contentDetails",
       maxResults=51, #to change to get all playlist (defalault is 5)
       mine=True
-  )
-  response = request.execute()
-
-  #namesOfPlaylists = [response['items'][i]['snippet']['title'] for i in range(len(response['items']))]
-  for i in range(len(response['items'])):
-    if response['items'][i]['snippet']['title'] == 'resume du week end':
-      return(response['items'][i])
+  ).execute()
 
 
+  ###search the playlist named 'resume du week end' the name of the playlist by convention
+  #namesOfPlaylists = [playlists['items'][i]['snippet']['title'] for i in range(len(playlists['items']))]
+  for i in range(len(playlists['items'])):
+    if playlists['items'][i]['snippet']['title'] == 'resume du week end':
+      playlist = playlists['items'][i]
+      
+      ###delete all videos in the playlist
+      videosInThePlaylist = youtube.playlistItems().list(
+        part="snippet,contentDetails",
+        maxResults=51, #to change to get all playlist (defalault is 5)
+        playlistId=playlist['id']
+      ).execute()
 
-def search_highlights(youtube, teams):
+      #print(videosInThePlaylist)
+      for i in range(len(videosInThePlaylist['items'])):
+
+        youtube.playlistItems().delete(
+            id=videosInThePlaylist['items'][i]['id']
+        ).execute()
+
+  return(playlist)
+
+def queryDefinition():
+  utc=pytz.UTC
+
+  premier_league_file = 'calendars/Premier_League.json'
+  ligue_1_file = 'calendars/Ligue_1.json'
+
+  path = 'calendars'
+
+  queries = []
+
+  for filename in glob.glob(os.path.join(path, '*.json')):
+    with open(os.path.join(os.getcwd(), filename), 'r') as f: # open in readonly mode
+
+      league = Path(filename).stem
+      print(league)
+      filename = json.load(f)
+
+      
+      
+      queries_League = []
+      for i, match in enumerate(filename):
+        
+        date_match = datetime.datetime.strptime(match['DateUtc'][:-1], '%Y-%m-%d %H:%M:%S')
+        date_match = utc.localize(date_match)
+
+        date_now = datetime.datetime.now(datetime.timezone.utc)
+        date_week_before = date_now + datetime.timedelta(days=-7)
+          
+        if date_week_before <= date_match <= date_now :
+
+          query = 'resume ' + match['HomeTeam'] + ' ' + match['AwayTeam']
+        
+          queries_League.append(query)
+          
+      dict = {}
+      dict[league] = queries_League
+
+      queries.append(dict)
+  return(queries)
+
+  
+
+
+def search_highlights(youtube, queries):
   videos = []
   date = datetime.datetime.now(datetime.timezone.utc)
   date = date + datetime.timedelta(days=-7)
   default=date.isoformat()
-  for team in teams :
-    search_response = youtube.search().list(
-      q=team,
+  for query in queries :
+    '''search_response = youtube.search().list(
+      q=query,
       part='id,snippet',
       maxResults=1,
       publishedAfter=date.isoformat()
-    ).execute()
+    ).execute()'''
 
     videos.append(search_response['items'][0]['id'])
 
@@ -82,6 +148,7 @@ def search_highlights(youtube, teams):
 def fill_playlist(youtube, playlist, videos):
 
   for video in videos:
+    print(video)
     body = dict(
       snippet=dict(
         playlistId=playlist['id'],

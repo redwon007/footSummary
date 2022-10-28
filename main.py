@@ -29,14 +29,15 @@ def get_authenticated_service():
 
 
 if __name__ == '__main__':
-  teams = ['real madrid', 'barca', 'arsenal', 'manchester city', 'liverpool']
+  teams = ['real madrid', 'barca', 'arsenal', 'manchester city', 'liverpool', 'marseille','bayern']
   youtube = get_authenticated_service()
   while(1):
     if searchPlaylist(youtube) == None :
       playlist = create_Playlist(youtube)
     else:
       playlist = searchPlaylist(youtube)
-    video = search_highlights(youtube, teams)
+    queries = queryDefinition()
+    video = search_highlights(youtube, queries)
     fill_playlist(youtube, playlist, video)
     input()
 
